@@ -18,7 +18,11 @@ Read `AGENTS.md`, `brief.md`, `research.md`, and this file. Review the screen dr
 
 ## Goal
 
-State what the app should help its Users accomplish and name the user story or stories that define that need.
+Help a US college student quickly know how to dress for the day's weather — current or up to 7 days out — so they're not caught under- or overdressed, via a character whose outfit, weather icon, written recommendation, and reminders all reflect one recommendation state for the selected location and date.
+
+User story (from `research.md`):
+
+> As a college student, I want to quickly know how to dress for the day's weather, so that I'm not caught under- or overdressed.
 
 ## Screen designs
 
