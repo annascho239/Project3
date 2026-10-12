@@ -54,21 +54,21 @@ During implementation, follow the approved plan in working checkpoints and keep 
 
 ### Build
 
-- [ ] Create or source the assets listed in `spec.md` (1 character + 9 outfit pieces + 5 weather icons + 3 reminder icons), starting early and continuing in parallel with the tasks below
-- [ ] Scaffold a static site skeleton (index.html, css/, js/, assets/) and deploy it to a public GitHub Pages URL immediately, so the deployment pipeline is proven before complexity is added
-- [ ] Build location resolution: device geolocation with manual city/ZIP fallback (via Open-Meteo Geocoding), persisting only the most recent resolved location to `localStorage`
-- [ ] Build weather fetching: NOAA/NWS gridpoint lookup → `/forecast` + raw `/gridpoints` data for the 7-day window, with a resolved approach for mapping day/night periods to each selectable day
-- [ ] Build the recommendation engine: deterministic seeded variation selection plus the outfit/reminder threshold rules from `spec.md`, producing one recommendation state object per (location, date)
-- [ ] Build the Main screen: responsive header (location/date, inline on laptop, expandable panel on phone), character layering renderer, weather icon/temperature/feels-like display, recommendation text, reminders row — all driven by the one recommendation state
-- [ ] Build in-place loading, service-error, and location-permission-denied states on the Main screen
-- [ ] Build the Information screen (phone and laptop layouts) with all five required disclosures
-- [ ] Build the share button and shareable card generation (Canvas composite of character, outfit, and weather)
-- [ ] Pick final palette hex values and verify WCAG contrast (4.5:1) before/while styling, not after
-- [ ] Use the approved screen drawings to guide layout and interaction work
-- [ ] Keep one recommendation state driving every visual and written output
-- [ ] Test and fix each checkpoint against the specification before starting the next
-- [ ] Commit meaningful working checkpoints
-- [ ] Deploy to a public HTTPS URL (continuously, as checkpoints land — not only once at the end)
+- [x] Create or source the assets listed in `spec.md` (1 character + 9 outfit pieces + 5 weather icons + 3 reminder icons), starting early and continuing in parallel with the tasks below
+- [x] Scaffold a static site skeleton (index.html, css/, js/, assets/) and deploy it to a public GitHub Pages URL immediately, so the deployment pipeline is proven before complexity is added
+- [x] Build location resolution: device geolocation with manual city/ZIP fallback (ZIP via Zippopotam.us, city names via Open-Meteo Geocoding — revised from an Open-Meteo-only approach after it failed on a real ZIP), persisting only the most recent resolved location to `localStorage`
+- [x] Build weather fetching: NOAA/NWS gridpoint lookup → `/forecast` + raw `/gridpoints` data for the 7-day window, with a resolved approach for mapping day/night periods to each selectable day
+- [x] Build the recommendation engine: deterministic seeded variation selection (within overlapping plausible-temperature ranges, revised after a puffer coat showed up on a 95°F day) plus the outfit/reminder threshold rules from `spec.md`, producing one recommendation state object per (location, date)
+- [x] Build the Main screen: responsive header (location/date, inline on laptop, expandable panel on phone), character layering renderer, weather icon/temperature/feels-like display, recommendation text, reminders row — all driven by the one recommendation state, plus an animated weather-matched background
+- [x] Build in-place loading, service-error, and location-permission-denied states on the Main screen, with a retry action for service errors (implemented, not yet live-tested against a real network failure)
+- [x] Build the Information screen (phone and laptop layouts) with all five required disclosures
+- [x] Build the share button and shareable card generation (Canvas composite of character, outfit, and weather)
+- [x] Pick final palette hex values and verify WCAG contrast (4.5:1) before/while styling, not after
+- [x] Use the approved screen drawings to guide layout and interaction work
+- [x] Keep one recommendation state driving every visual and written output
+- [x] Test and fix each checkpoint against the specification before starting the next
+- [x] Commit meaningful working checkpoints
+- [x] Deploy to a public HTTPS URL (live at https://annascho239.github.io/Project3/, verified serving all files and NOAA/NWS CORS working from that exact origin)
 
 ### Verify and revise
 
