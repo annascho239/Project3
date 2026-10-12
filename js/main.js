@@ -4,14 +4,16 @@ import {
   saveLocation,
   loadSavedLocation,
 } from "./location.js";
+import { fetchWeatherForLocation } from "./weather.js";
 
 const statusEl = document.getElementById("location-status");
+const weatherEl = document.getElementById("weather-status");
 const deviceButton = document.getElementById("use-device-location");
 const manualForm = document.getElementById("manual-location-form");
 const manualInput = document.getElementById("manual-location-input");
 
 function renderLocation(location) {
-  statusEl.textContent = `Location: ${location.name || "(name pending)"} (${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}) — via ${location.source}`;
+  statusEl.textContent = `Location: ${location.name || "(resolving name...)"} (${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}) — via ${location.source}`;
 }
 
 function renderError(type) {
@@ -20,9 +22,28 @@ function renderError(type) {
     unavailable: "Location isn't available on this device/browser.",
     empty: "Type a city or ZIP code first.",
     not_found: "Couldn't find that city or ZIP. Try another.",
-    service_error: "The location service failed. Try again.",
+    service_error: "The weather or location service failed. Try again.",
   };
   statusEl.textContent = messages[type] || "Something went wrong.";
+}
+
+async function loadWeatherFor(location) {
+  weatherEl.textContent = "Loading forecast...";
+  try {
+    const { locationName, periods } = await fetchWeatherForLocation(location.lat, location.lon);
+    location.name = locationName;
+    saveLocation(location);
+    renderLocation(location);
+
+    const next6 = periods.slice(0, 6).map((p) =>
+      `${p.name}: ${p.temperature}°${p.temperatureUnit}, feels ${p.feelsLike ?? "?"}°F, ` +
+      `sky cover ${p.skyCover ?? "?"}%, precip ${p.probabilityOfPrecipitation?.value ?? 0}%, ${p.shortForecast}`
+    );
+    weatherEl.innerHTML = "<strong>Next periods:</strong><br>" + next6.join("<br>");
+  } catch (err) {
+    renderError(err.type || "service_error");
+    weatherEl.textContent = "";
+  }
 }
 
 deviceButton.addEventListener("click", async () => {
@@ -31,6 +52,7 @@ deviceButton.addEventListener("click", async () => {
     const location = await resolveDeviceLocation();
     saveLocation(location);
     renderLocation(location);
+    loadWeatherFor(location);
   } catch (err) {
     renderError(err.type);
   }
@@ -43,6 +65,7 @@ manualForm.addEventListener("submit", async (event) => {
     const location = await resolveManualLocation(manualInput.value);
     saveLocation(location);
     renderLocation(location);
+    loadWeatherFor(location);
   } catch (err) {
     renderError(err.type);
   }
@@ -51,4 +74,5 @@ manualForm.addEventListener("submit", async (event) => {
 const saved = loadSavedLocation();
 if (saved) {
   renderLocation(saved);
+  loadWeatherFor(saved);
 }
