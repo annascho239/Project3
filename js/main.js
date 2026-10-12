@@ -6,6 +6,7 @@ import {
 } from "./location.js";
 import { fetchWeatherForLocation } from "./weather.js";
 import { buildRecommendationState } from "./recommendation.js";
+import { shareCard } from "./share.js";
 
 const WEATHER_ICON_FILES = {
   sunny: "sunny-icon.png",
@@ -78,6 +79,9 @@ const mainScreen = el("main-screen");
 const infoScreen = el("info-screen");
 const infoButton = el("info-button");
 const infoBackButton = el("info-back");
+const shareButton = el("share-button");
+
+let currentState = null; // the last rendered recommendation state, for sharing
 
 let lastAction = null; // retried by the "Try again" button on a service_error/unavailable
 
@@ -129,6 +133,7 @@ function renderDateChips() {
 }
 
 function renderRecommendationState(state) {
+  currentState = state;
   mainScreen.hidden = false;
   setWeatherScene(state.weatherIcon);
   locationNameEl.textContent = state.locationName;
@@ -221,6 +226,18 @@ function handleError(type) {
 
 retryButton.addEventListener("click", () => {
   if (lastAction) lastAction();
+});
+
+shareButton.addEventListener("click", async () => {
+  if (!currentState) return;
+  shareButton.disabled = true;
+  try {
+    await shareCard(currentState, dateNameEl.textContent);
+  } catch (err) {
+    setStatus("Couldn't create the share image. Try again.");
+  } finally {
+    shareButton.disabled = false;
+  }
 });
 
 infoButton.addEventListener("click", () => {

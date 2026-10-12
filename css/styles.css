@@ -283,6 +283,7 @@ input:focus-visible {
   font-weight: 600;
 }
 
+#share-button,
 #info-button {
   width: var(--touch-min);
   background: var(--color-card);
