@@ -115,20 +115,35 @@ function formatDateLabel(dateStr, isToday) {
   return d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
 }
 
+// Builds the chip buttons once per date list (new location/weather load).
+// Clicking a chip only updates .selected via updateChipSelection() below -
+// it does NOT rebuild the DOM. Found via VoiceOver testing that rebuilding
+// every chip (including the one just clicked) on each click destroyed the
+// focused element mid-interaction, so VoiceOver lost its accessible name and
+// fell back to announcing a generic "content button".
 function renderDateChips() {
   dateChipRow.innerHTML = "";
   currentDates.forEach((dateStr) => {
     const chip = document.createElement("button");
     chip.type = "button";
     chip.className = "date-chip" + (dateStr === selectedDate ? " selected" : "");
+    chip.setAttribute("aria-pressed", dateStr === selectedDate ? "true" : "false");
     chip.textContent = formatDateLabel(dateStr, dateStr === todayStr);
     chip.addEventListener("click", () => {
       selectedDate = dateStr;
-      renderDateChips();
+      updateChipSelection();
       renderStateForSelectedDate();
       closeControlsOnPhone();
     });
     dateChipRow.appendChild(chip);
+  });
+}
+
+function updateChipSelection() {
+  dateChipRow.querySelectorAll(".date-chip").forEach((chip, index) => {
+    const isSelected = currentDates[index] === selectedDate;
+    chip.classList.toggle("selected", isSelected);
+    chip.setAttribute("aria-pressed", isSelected ? "true" : "false");
   });
 }
 
