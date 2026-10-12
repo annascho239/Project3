@@ -91,7 +91,7 @@ Translate every fixed brief requirement and the selected research-driven feature
 
 ### Information screen
 
-14. **R14 — Required disclosures.** The Information screen states: the creator's name, the weather data source (NOAA/NWS) with a link, the recommendation method/thresholds used (including that the sunscreen reminder is based on sky cover + daytime, not a true UV index, since NOAA/NWS doesn't provide one), privacy practices (location is stored only on-device, only the most recent location is kept, and the weather provider receives the coordinates sent in each request), and art/license credits (hand-drawn character and outfit art by the Developer; licensed icon pack name + CC BY attribution for weather/reminder icons).
+14. **R14 — Required disclosures.** The Information screen states: the creator's name, the weather data source (NOAA/NWS) with a link, the recommendation method/thresholds used (including that the sunscreen reminder is based on sky cover + daytime, not a true UV index, since NOAA/NWS doesn't provide one), privacy practices (location is stored only on-device, only the most recent location is kept, and the weather provider receives the coordinates sent in each request), and art credits (all 18 assets — character, outfit pieces, weather icons, reminder icons — are original hand-drawn artwork by the Developer; no third-party/licensed assets are used).
     *Acceptance check:* every one of those five items is present and readable on the Information screen, on both phone and laptop.
 
 ### Error handling
@@ -167,15 +167,15 @@ This single object is computed once per (location, date, weather data) and used 
 
 | Asset | Appears in | Format | Source | Credit/license |
 |---|---|---|---|---|
-| Base character body | Main screen | SVG/PNG | Original, hand-drawn by Developer | Full ownership |
-| Upper piece × 3 | Main screen (layered on character) | SVG/PNG | Original, hand-drawn by Developer | Full ownership |
-| Lower piece × 3 | Main screen (layered on character) | SVG/PNG | Original, hand-drawn by Developer | Full ownership |
-| Footwear piece × 3 | Main screen (layered on character) | SVG/PNG | Original, hand-drawn by Developer | Full ownership |
-| Weather icons × 5 (sunny, partly cloudy, cloudy, rain, snow) | Main screen | SVG | Licensed icon pack (e.g. Font Awesome) | CC BY 4.0, attribution on Information screen |
-| Reminder icons × 3 (umbrella, sunscreen, hydration) | Main screen reminders row | SVG | Licensed icon pack (e.g. Font Awesome) | CC BY 4.0, attribution on Information screen |
+| Base character body | Main screen | PNG (transparent) | Original, hand-drawn by Developer | Full ownership |
+| Upper piece × 3 | Main screen (layered on character) | PNG (transparent) | Original, hand-drawn by Developer | Full ownership |
+| Lower piece × 3 | Main screen (layered on character) | PNG (transparent) | Original, hand-drawn by Developer | Full ownership |
+| Footwear piece × 3 | Main screen (layered on character) | PNG (transparent) | Original, hand-drawn by Developer | Full ownership |
+| Weather icons × 5 (sunny, partly cloudy, cloudy, rain, snow) | Main screen | PNG (transparent) | Original, hand-drawn by Developer | Full ownership |
+| Reminder icons × 3 (umbrella, sunscreen, hydration) | Main screen reminders row | PNG (transparent) | Original, hand-drawn by Developer | Full ownership |
 | Share-card background/layout | Generated share image | Canvas/image composite | Original, composited from the above assets | Full ownership |
 
-18 original/base assets total (1 character + 9 outfit pieces + 5 weather icons + 3 reminder icons), per the art estimate in `research.md`.
+18 original assets total (1 character + 9 outfit pieces + 5 weather icons + 3 reminder icons), per the art estimate in `research.md`. All hand-drawn by the Developer, not a licensed icon pack as originally considered — see Revisions.
 
 ## Out of scope
 
@@ -197,6 +197,7 @@ After implementation or testing, record requirement changes and the evidence tha
 - **2026-10-12 (during the recommendation-engine build task):** Found R9 and R12 contradicted each other — R9's "mapped to one of the 3 variations" by temperature band meant two similar-temperature days would always show the identical outfit piece per category, failing R12's acceptance check that similar forecasts can still show different variations. Initially resolved per the brief's original intent (variety, not strict temperature-matching) by making outfit art selection fully independent-random per category.
 - **2026-10-12 (same day, after testing the built Main screen):** Fully random selection looked wrong in practice — a puffer coat (the "cold" upper piece) could appear on a 95°F day, since the fix above dropped temperature-plausibility entirely. Refined to overlapping eligible-temperature ranges per piece (cold below 60°F, mild 45-85°F, warm above 70°F): random choice happens only among pieces eligible at the day's feels-like temperature, which keeps the art always plausible while still giving variety whenever the temperature falls in an overlap zone. Updated R9 and the Recommendation state section's outfit-selection rule accordingly.
 - **2026-10-12 (same day, found via manual testing with ZIP 80016):** R4's original Open-Meteo-only geocoding (decided during planning) failed on a real ZIP — Open-Meteo's `country=US` filter isn't actually reliable for raw ZIP queries, matching "80016" against a French postal code instead of Aurora, CO, despite working fine for city names. The planning-phase verification only tested one ZIP (78701) and happened to succeed, which masked this. Fixed by routing 5-digit input to Zippopotam.us (free, no key, CORS-verified, purpose-built for ZIP lookups) and city names to Open-Meteo. Updated R4 accordingly.
+- **2026-10-12 (building the Information screen):** `research.md`'s Artwork approach and `spec.md`'s original Assets table planned weather/reminder icons as a licensed CC BY icon pack (e.g. Font Awesome), with only the character/outfit art as original. In practice, the Developer hand-drew all 18 assets, including the weather and reminder icons, in a consistent style. Updated the Assets table and R14 to credit everything as original Developer artwork with no third-party licenses involved.
 
 ## Approval
 

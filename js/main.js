@@ -75,6 +75,9 @@ const dateChipRow = el("date-chip-row");
 const statusMessage = el("status-message");
 const retryButton = el("retry-button");
 const mainScreen = el("main-screen");
+const infoScreen = el("info-screen");
+const infoButton = el("info-button");
+const infoBackButton = el("info-back");
 
 let lastAction = null; // retried by the "Try again" button on a service_error/unavailable
 
@@ -218,6 +221,21 @@ function handleError(type) {
 
 retryButton.addEventListener("click", () => {
   if (lastAction) lastAction();
+});
+
+infoButton.addEventListener("click", () => {
+  closeControlsOnPhone();
+  mainScreen.hidden = true;
+  infoScreen.hidden = false;
+});
+
+infoBackButton.addEventListener("click", () => {
+  infoScreen.hidden = true;
+  if (currentPeriods) {
+    mainScreen.hidden = false;
+  } else {
+    openControls();
+  }
 });
 
 locationToggle.addEventListener("click", () => {

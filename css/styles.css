@@ -179,6 +179,50 @@ body {
   padding: 0 20px;
 }
 
+/* Information screen */
+#info-screen {
+  margin-top: 16px;
+}
+
+#info-screen h2 {
+  margin: 0 0 2px;
+}
+
+.info-subheading {
+  margin: 0 0 16px;
+  color: var(--color-text-muted);
+}
+
+#info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.info-card {
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.info-card h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.info-card p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+#info-back {
+  margin-top: 16px;
+  background: var(--color-primary);
+  color: white;
+  padding: 0 20px;
+}
+
 img {
   max-width: 100%;
 }
@@ -457,5 +501,14 @@ input:focus-visible {
 
   #weather-panel {
     flex: 1;
+  }
+
+  #info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  #info-art-credits {
+    grid-column: 1 / -1;
   }
 }

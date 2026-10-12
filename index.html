@@ -94,6 +94,36 @@
 
     <p id="status-message" role="status" class="status-pill"></p>
     <button id="retry-button" type="button" hidden>Try again</button>
+
+    <section id="info-screen" aria-label="Information" hidden>
+      <h2>About</h2>
+      <p class="info-subheading">How recommendations work</p>
+
+      <div id="info-grid">
+        <div class="info-card">
+          <h3>Creator</h3>
+          <p>Anna Cho</p>
+        </div>
+        <div class="info-card">
+          <h3>Weather source</h3>
+          <p>Current and forecast data comes from the <a href="https://www.weather.gov" target="_blank" rel="noopener">National Weather Service (NOAA/NWS)</a>, the official US government weather API. No other weather provider is used.</p>
+        </div>
+        <div class="info-card">
+          <h3>Method</h3>
+          <p>Outfit and reminders are based on temperature, feels-like temperature, precipitation chance, and sky cover from NOAA/NWS. NOAA/NWS doesn't provide a UV index, so the sunscreen reminder uses low sky cover during daytime as a proxy for sun exposure instead. Which outfit piece appears is chosen randomly among pieces that are plausible for the day's feels-like temperature, so similar forecasts don't always look identical.</p>
+        </div>
+        <div class="info-card">
+          <h3>Privacy</h3>
+          <p>Your location is used only to look up nearby weather. Only your most recent location is saved, on this device only - nothing is sent to a server or account. NOAA/NWS receives your coordinates as part of each forecast request.</p>
+        </div>
+        <div class="info-card" id="info-art-credits">
+          <h3>Art &amp; credits</h3>
+          <p>The character, its outfit pieces, and every weather and reminder icon are original hand-drawn artwork by Anna Cho. No third-party or licensed assets are used.</p>
+        </div>
+      </div>
+
+      <button id="info-back" type="button">Back</button>
+    </section>
   </div>
   <script type="module" src="js/main.js"></script>
 </body>

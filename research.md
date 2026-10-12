@@ -121,8 +121,7 @@ Layered/swappable pieces on one base character body (composited in code), rather
 
 ### Artwork approach
 
-- **Character + outfit pieces**: original, hand-drawn by the Developer. At 18 total assets this is a feasible scope, gives full ownership/copyright, and matches the illustrated style liked in the Weather Fit reference.
-- **Weather/reminder icons**: a licensed CC BY icon pack (e.g. Font Awesome or The Noun Project) — fast, small in number, and license/attribution is well-defined and simple to disclose on the info screen.
+- **All 18 assets** (character, outfit pieces, weather icons, reminder icons): original, hand-drawn by the Developer. Full ownership/copyright, consistent illustrated style across every asset, no third-party license to track or disclose. (Originally planned as a mix — hand-drawn character/outfits plus a licensed CC BY icon pack for weather/reminder icons — but the Developer hand-drew everything during the build instead; see spec.md's Revisions.)
 
 ### Weather provider
 
@@ -159,6 +158,8 @@ Full 7 days (today + 6 days ahead), matching NOAA/NWS's maximum range. Gives the
 ## Revisions
 
 Record new evidence or changed decisions and explain why they changed.
+
+- **2026-10-12 (during the build):** Artwork approach changed from "hand-drawn character/outfits + licensed icon pack for weather/reminder icons" to all 18 assets being original hand-drawn artwork by the Developer. See spec.md's Revisions for detail.
 
 ## Approval
 
