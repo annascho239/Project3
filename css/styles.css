@@ -171,6 +171,14 @@ body {
   display: none;
 }
 
+#retry-button {
+  display: block;
+  margin-top: 8px;
+  background: var(--color-primary);
+  color: white;
+  padding: 0 20px;
+}
+
 img {
   max-width: 100%;
 }

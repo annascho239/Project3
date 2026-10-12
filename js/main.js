@@ -73,7 +73,10 @@ const manualSubmit = el("manual-location-submit");
 const deviceLocationButton = el("use-device-location");
 const dateChipRow = el("date-chip-row");
 const statusMessage = el("status-message");
+const retryButton = el("retry-button");
 const mainScreen = el("main-screen");
+
+let lastAction = null; // retried by the "Try again" button on a service_error/unavailable
 
 let currentPeriods = null;
 let currentLocation = null;
@@ -175,7 +178,9 @@ function renderStateForSelectedDate() {
 }
 
 async function loadWeatherFor(location) {
+  lastAction = () => loadWeatherFor(location);
   setStatus("Loading forecast...");
+  retryButton.hidden = true;
   mainScreen.hidden = true;
   try {
     const { locationName, periods } = await fetchWeatherForLocation(location.lat, location.lon);
@@ -194,19 +199,26 @@ async function loadWeatherFor(location) {
   }
 }
 
+const RETRYABLE_ERROR_TYPES = ["service_error", "unavailable"];
+
 function handleError(type) {
   const messages = {
     denied: "Location access is off. Enter a city or ZIP below.",
-    unavailable: "Location isn't available on this device/browser.",
+    unavailable: "Location isn't available right now. Check your device's location settings, or enter a city/ZIP instead.",
     empty: "Type a city or ZIP code first.",
     not_found: "Couldn't find that city or ZIP. Try another.",
-    service_error: "The weather or location service failed. Try again.",
+    service_error: "The weather or location service failed.",
   };
   setStatus(messages[type] || "Something went wrong.");
   if (type === "denied" || type === "not_found" || type === "empty") {
     openControls();
   }
+  retryButton.hidden = !(RETRYABLE_ERROR_TYPES.includes(type) && lastAction);
 }
+
+retryButton.addEventListener("click", () => {
+  if (lastAction) lastAction();
+});
 
 locationToggle.addEventListener("click", () => {
   if (controlsPanel.hidden) openControls();
@@ -217,7 +229,9 @@ dateToggle.addEventListener("click", () => {
   else closeControlsOnPhone();
 });
 async function submitManualLocation() {
+  lastAction = submitManualLocation;
   setStatus("Looking up location...");
+  retryButton.hidden = true;
   const location = await resolveManualLocation(manualInput.value);
   await loadWeatherFor(location);
 }
@@ -236,15 +250,19 @@ controlsDone.addEventListener("click", async () => {
   closeControlsOnPhone();
 });
 
-deviceLocationButton.addEventListener("click", async () => {
+async function attemptDeviceLocation() {
+  lastAction = attemptDeviceLocation;
   setStatus("Requesting device location...");
+  retryButton.hidden = true;
   try {
     const location = await resolveDeviceLocation();
     await loadWeatherFor(location);
   } catch (err) {
     handleError(err.type);
   }
-});
+}
+
+deviceLocationButton.addEventListener("click", attemptDeviceLocation);
 
 manualSubmit.addEventListener("click", async () => {
   try {
