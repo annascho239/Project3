@@ -72,8 +72,8 @@ Translate every fixed brief requirement and the selected research-driven feature
 
 8. **R8 — Single recommendation state.** For a given location + date + live weather data, one recommendation state object drives the character's outfit (upper/lower/footwear), the weather icon, the written recommendation sentence, and the reminders shown — all four always agree with each other.
    *Acceptance check:* for any selected date, the outfit, icon, text, and reminders never contradict each other (e.g. a rain icon never appears without the umbrella reminder, per R11).
-9. **R9 — Outfit categories.** The character's outfit always includes one upper, one lower, and one footwear piece, each with 3 possible variations (9 pieces total), chosen based on temperature/conditions.
-   *Acceptance check:* across the 7 available dates, at least two different variations appear in at least one category (variations aren't always the same piece).
+9. **R9 — Outfit categories.** The character's outfit always includes one upper, one lower, and one footwear piece, each with 3 possible variations (9 pieces total). Which piece appears is chosen independently at random per category (see R12/R13), not mapped deterministically to a temperature band — temperature/conditions instead drive the written recommendation text and reminders (R11), which stay weather-accurate even as the art varies for visual variety.
+   *Acceptance check:* across the 7 available dates, at least two different variations appear in at least one category (variations aren't always the same piece), including across dates with very similar temperatures.
 10. **R10 — Weather icon set.** One of 5 icons (sunny, partly cloudy, cloudy, rain, snow) displays based on the NOAA/NWS condition code for the selected date, alongside the numeric temperature and "feels like" value.
     *Acceptance check:* a sunny-coded forecast shows the sunny icon; a rain-coded forecast shows the rain icon (manually verified against at least 2 differing real forecasts).
 11. **R11 — Reminders.** Umbrella, sunscreen, and hydration reminders each appear only when conditions warrant them, each with 3 possible wording variations:
@@ -151,7 +151,7 @@ Define the weather inputs, recommendation categories, coded rules, and shared st
 This single object is computed once per (location, date, weather data) and used to render the character, weather icon, recommendation text, and reminders — never computed separately per UI element (satisfies R8).
 
 **Coded rules (thresholds, per `research.md`'s weather/sun-safety evidence):**
-- *Outfit selection* — driven primarily by temperature bands (e.g. cold/mild/warm) crossed with precipitation/wind, mapped to one of the 3 variations in each of upper/lower/footwear.
+- *Outfit selection* — each of upper/lower/footwear independently picks one of its 3 variations via the deterministic seed (R12/R13), not a temperature-band mapping. Temperature/conditions are not ignored — they drive the written recommendation text and reminders below — but which outfit art piece renders is random-for-variety, per the resolved conflict recorded in Revisions.
 - *Umbrella reminder* — shown when precipitation probability exceeds a defined threshold (e.g. ≥40%).
 - *Sunscreen reminder* — shown when `skyCover` is low (e.g. <40%) during daytime. Verified directly against live NOAA/NWS responses that no UV index field exists on either the `/forecast` or raw `/gridpoints` endpoints, so this sky-cover + daytime proxy is used instead (see R11).
 - *Hydration reminder* — shown when temperature exceeds a defined threshold (e.g. ≥80°F).
@@ -194,6 +194,7 @@ Record features intentionally excluded from this project.
 After implementation or testing, record requirement changes and the evidence that prompted them. Update the screen drawings when a material layout or interaction changes.
 
 - **2026-10-04 (during planning):** R4 was missing how manual city/ZIP entry resolves to coordinates. Verified directly that NOAA/NWS only accepts lat/lon, that OpenStreetMap Nominatim lacks CORS support (unusable from static GitHub Pages hosting), and that the Open-Meteo Geocoding API is free, no-key, and CORS-enabled for both city and ZIP lookups. Added this to R4 as the geocoding mechanism.
+- **2026-10-12 (during the recommendation-engine build task):** Found R9 and R12 contradicted each other — R9's "mapped to one of the 3 variations" by temperature band meant two similar-temperature days would always show the identical outfit piece per category, failing R12's acceptance check that similar forecasts can still show different variations. Resolved per the brief's original intent (variety, not strict temperature-matching): outfit art selection is fully independent-random per category (R12/R13), while temperature/conditions drive the written recommendation text and reminders instead. Updated R9 and the Recommendation state section's outfit-selection rule accordingly.
 
 ## Approval
 

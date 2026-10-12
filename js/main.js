@@ -5,6 +5,7 @@ import {
   loadSavedLocation,
 } from "./location.js";
 import { fetchWeatherForLocation } from "./weather.js";
+import { buildRecommendationState } from "./recommendation.js";
 
 const statusEl = document.getElementById("location-status");
 const weatherEl = document.getElementById("weather-status");
@@ -39,7 +40,23 @@ async function loadWeatherFor(location) {
       `${p.name}: ${p.temperature}°${p.temperatureUnit}, feels ${p.feelsLike ?? "?"}°F, ` +
       `sky cover ${p.skyCover ?? "?"}%, precip ${p.probabilityOfPrecipitation?.value ?? 0}%, ${p.shortForecast}`
     );
-    weatherEl.innerHTML = "<strong>Next periods:</strong><br>" + next6.join("<br>");
+
+    const todayStr = periods[0].startTime.slice(0, 10);
+    const dates = [...new Set(periods.map((p) => p.startTime.slice(0, 10)))].slice(0, 7);
+    const stateLines = dates.map((dateStr) => {
+      const state = buildRecommendationState(locationName, dateStr, periods, todayStr);
+      if (!state) return `${dateStr}: no forecast period available`;
+      const reminderText = state.reminders.length
+        ? state.reminders.map((r) => `${r.type} (${r.wording})`).join("; ")
+        : "none";
+      return `${state.date}${state.isToday ? " (today)" : ""} — ${state.weatherIcon}, ${state.temperature}°F/feels ${state.feelsLike}°F — ` +
+        `outfit: upper-${state.outfit.upper}/lower-${state.outfit.lower}/footwear-${state.outfit.footwear} — ` +
+        `"${state.recommendationText}" — reminders: ${reminderText}`;
+    });
+
+    weatherEl.innerHTML =
+      "<strong>Next periods (raw):</strong><br>" + next6.join("<br>") +
+      "<br><br><strong>Recommendation state per day:</strong><br>" + stateLines.join("<br><br>");
   } catch (err) {
     renderError(err.type || "service_error");
     weatherEl.textContent = "";
