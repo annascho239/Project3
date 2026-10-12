@@ -8,8 +8,15 @@
 </head>
 <body>
   <div id="app">
-    <p>Scaffold deployed. Build starts here.</p>
+    <h1>Weather Fit — location checkpoint</h1>
+    <button id="use-device-location">Use my location</button>
+    <form id="manual-location-form">
+      <label for="manual-location-input">City or ZIP code</label>
+      <input id="manual-location-input" type="text" placeholder="e.g. Austin, TX or 78701">
+      <button type="submit">Set location</button>
+    </form>
+    <p id="location-status">No location set yet.</p>
   </div>
-  <script src="js/main.js"></script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
