@@ -215,7 +215,7 @@ function handleError(type) {
     unavailable: "Location isn't available right now. Check your device's location settings, or enter a city/ZIP instead.",
     empty: "Type a city or ZIP code first.",
     not_found: "Couldn't find that city or ZIP. Try another.",
-    service_error: "The weather or location service failed.",
+    service_error: "The weather or location service failed. Check your connection, try again, or choose another day.",
   };
   setStatus(messages[type] || "Something went wrong.");
   if (type === "denied" || type === "not_found" || type === "empty") {
