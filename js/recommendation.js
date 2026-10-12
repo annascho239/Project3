@@ -9,19 +9,19 @@
 // Temperature/conditions instead drive the written text and reminders.
 
 const UMBRELLA_WORDINGS = [
-  "Bring an umbrella — rain's likely today.",
+  "Bring an umbrella - rain's likely today.",
   "Pack an umbrella just in case.",
-  "Rain's in the forecast — grab an umbrella before you head out.",
+  "Rain's in the forecast - grab an umbrella before you head out.",
 ];
 const SUNSCREEN_WORDINGS = [
-  "Clear skies ahead — put on sunscreen.",
-  "Sun's out — don't forget sunscreen.",
+  "Clear skies ahead - put on sunscreen.",
+  "Sun's out - don't forget sunscreen.",
   "Mostly clear today, so sunscreen is a good idea.",
 ];
 const HYDRATION_WORDINGS = [
-  "It's warm out — stay hydrated.",
+  "It's warm out - stay hydrated.",
   "Heat's up today, so keep drinking water.",
-  "Warm day ahead — bring a water bottle.",
+  "Warm day ahead - bring a water bottle.",
 ];
 
 const UMBRELLA_PRECIP_THRESHOLD = 40; // percent
@@ -43,10 +43,25 @@ function seededIndex(seedParts, modulo) {
   return hashString(seedParts.join("|")) % modulo;
 }
 
-function pickOutfitVariation(locationName, dateStr, category) {
-  const variations = ["cold", "mild", "warm"]; // asset-name suffixes, not temperature bands here
-  const index = seededIndex([locationName, dateStr, category], variations.length);
-  return variations[index];
+// Each piece's eligible range overlaps its neighbor's, so a given temperature
+// is often plausible for more than one piece — random choice happens only
+// among the eligible ones, never across implausible ones (e.g. a puffer coat
+// on a 95°F day). See spec.md's Revisions entry: fully random selection with
+// no eligibility check looked absurd in practice, and strict single-band
+// mapping killed variety entirely (R12) — this is the resolved middle path.
+const OUTFIT_ELIGIBILITY = {
+  cold: (f) => f < 60,
+  mild: (f) => f >= 45 && f <= 85,
+  warm: (f) => f > 70,
+};
+
+function pickOutfitVariation(locationName, dateStr, category, feelsLike) {
+  const eligible = Object.keys(OUTFIT_ELIGIBILITY).filter((variation) =>
+    OUTFIT_ELIGIBILITY[variation](feelsLike)
+  );
+  const pool = eligible.length > 0 ? eligible : ["mild"]; // safety net; always at least one match in practice
+  const index = seededIndex([locationName, dateStr, category], pool.length);
+  return pool[index];
 }
 
 function pickWording(locationName, dateStr, reminderType, wordings) {
@@ -105,11 +120,11 @@ function buildRecommendationText(period) {
   const feelsLike = period.feelsLike ?? period.temperature;
   let advice;
   if (feelsLike < 50) {
-    advice = "Bundle up — it's chilly out there.";
+    advice = "Bundle up - it's chilly out there.";
   } else if (feelsLike <= 75) {
     advice = "A light layer should keep you comfortable.";
   } else {
-    advice = "Dress light — it's warm today.";
+    advice = "Dress light - it's warm today.";
   }
   return `Feels like ${feelsLike}°F and ${(period.shortForecast || "").toLowerCase()}. ${advice}`;
 }
@@ -146,18 +161,20 @@ export function buildRecommendationState(locationName, dateStr, periods, todaySt
   const period = getPeriodForDate(periods, dateStr);
   if (!period) return null;
 
+  const feelsLike = period.feelsLike ?? period.temperature;
+
   return {
     locationName,
     date: dateStr,
     isToday: dateStr === todayStr,
     temperature: period.temperature,
-    feelsLike: period.feelsLike ?? period.temperature,
+    feelsLike,
     shortForecast: period.shortForecast,
     weatherIcon: mapWeatherIcon(period),
     outfit: {
-      upper: pickOutfitVariation(locationName, dateStr, "upper"),
-      lower: pickOutfitVariation(locationName, dateStr, "lower"),
-      footwear: pickOutfitVariation(locationName, dateStr, "footwear"),
+      upper: pickOutfitVariation(locationName, dateStr, "upper", feelsLike),
+      lower: pickOutfitVariation(locationName, dateStr, "lower", feelsLike),
+      footwear: pickOutfitVariation(locationName, dateStr, "footwear", feelsLike),
     },
     recommendationText: buildRecommendationText(period),
     reminders: buildReminders(locationName, dateStr, period),

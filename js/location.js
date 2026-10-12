@@ -3,6 +3,7 @@
 
 const LOCATION_STORAGE_KEY = "weatherfit:location";
 const GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search";
+const ZIP_LOOKUP_URL = "https://api.zippopotam.us/us";
 
 // One-time coordinate lookup (not watchPosition) — spec R22, minimal location use.
 export function resolveDeviceLocation() {
@@ -37,16 +38,46 @@ export function resolveDeviceLocation() {
   });
 }
 
-// Resolves a typed city name or ZIP code to coordinates via Open-Meteo Geocoding
-// (free, no key, CORS-enabled — verified directly; spec R4). Takes the top US
-// result; ambiguous city names across states aren't disambiguated in this pass.
+// Resolves a typed city name or ZIP code to coordinates. Routes 5-digit input
+// to Zippopotam (free, no key, CORS-enabled, purpose-built for ZIP lookups)
+// and everything else to Open-Meteo Geocoding. Found via testing with a real
+// ZIP (80016) that Open-Meteo's `country=US` filter isn't actually reliable
+// for raw ZIP queries — it matched "80016" against a French postal code
+// (Amiens has a "80016 CEDEX 1" code) instead of Aurora, CO, even though it
+// works fine for city names. Zippopotam only covers ZIPs, so this is a
+// deliberate split rather than picking one provider for both.
 export async function resolveManualLocation(query) {
   const trimmed = query.trim();
   if (!trimmed) {
     throw { type: "empty" };
   }
 
-  const url = `${GEOCODING_URL}?name=${encodeURIComponent(trimmed)}&count=5&country=US`;
+  if (/^\d{5}$/.test(trimmed)) {
+    return resolveZipCode(trimmed);
+  }
+  return resolveCityName(trimmed);
+}
+
+async function resolveZipCode(zip) {
+  const response = await fetch(`${ZIP_LOOKUP_URL}/${zip}`);
+  if (response.status === 404) {
+    throw { type: "not_found" };
+  }
+  if (!response.ok) {
+    throw { type: "service_error" };
+  }
+  const data = await response.json();
+  const place = data.places[0];
+  return {
+    lat: parseFloat(place.latitude),
+    lon: parseFloat(place.longitude),
+    name: `${place["place name"]}, ${place["state abbreviation"]}`,
+    source: "manual",
+  };
+}
+
+async function resolveCityName(query) {
+  const url = `${GEOCODING_URL}?name=${encodeURIComponent(query)}&count=5&country=US`;
   const response = await fetch(url);
   if (!response.ok) {
     throw { type: "service_error" };

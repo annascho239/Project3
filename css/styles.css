@@ -2,19 +2,452 @@
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   color-scheme: light;
+
+  /* Palette — verified directly against WCAG 2.2 contrast minimums (4.5:1 for
+     normal text) before use, not after. See transcripts for the check. */
+  --color-bg: #fafafa;
+  --color-card: #ffffff;
+  --color-text: #1a1a1a;
+  --color-text-muted: #5b6472;
+  --color-primary: #1a56db; /* buttons, active controls — 6.18:1 on white */
+  --color-accent: #c2410c; /* reminders/warm accents — 5.18:1 on white */
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --touch-min: 44px; /* Apple HIG guidance; comfortably exceeds WCAG's 24px minimum */
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  background: #fafafa;
-  color: #1a1a1a;
+  background: var(--color-bg); /* fallback shown briefly before JS picks a scene */
+  color: var(--color-text);
+}
+
+/* Animated weather-matched background, fixed behind all the opaque rounded
+   cards so text stays readable regardless of which scene is active. */
+#weather-background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+#weather-background .sky {
+  position: absolute;
+  inset: 0;
+  transition: background 1s ease;
+  background: linear-gradient(to bottom, #fafafa, #fafafa);
+}
+
+#weather-background.scene-sunny .sky { background: linear-gradient(to bottom, #8ec9f0, #fef3c7); }
+#weather-background.scene-partly-cloudy .sky { background: linear-gradient(to bottom, #a8c9e8, #e8eef5); }
+#weather-background.scene-cloudy .sky { background: linear-gradient(to bottom, #b8c2cc, #d9dee3); }
+#weather-background.scene-rain .sky { background: linear-gradient(to bottom, #5c6b7a, #8fa0ad); }
+#weather-background.scene-snow .sky { background: linear-gradient(to bottom, #c9d6e3, #eef3f7); }
+
+.scene {
+  position: absolute;
+  inset: 0;
+  display: none;
+}
+.scene.active {
+  display: block;
+}
+
+.sun {
+  position: absolute;
+  top: 10%;
+  right: 15%;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffd84d, #ffb703);
+  box-shadow: 0 0 60px 20px rgba(255, 183, 3, 0.5);
+  animation: sun-pulse 4s ease-in-out infinite;
+}
+.sun.small {
+  width: 70px;
+  height: 70px;
+  top: 8%;
+  right: 20%;
+}
+
+@keyframes sun-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 60px 20px rgba(255, 183, 3, 0.5); }
+  50% { transform: scale(1.08); box-shadow: 0 0 80px 30px rgba(255, 183, 3, 0.65); }
+}
+
+.cloud {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 50px;
+  opacity: 0.85;
+  animation: drift linear infinite;
+}
+.cloud::before,
+.cloud::after {
+  content: "";
+  position: absolute;
+  background: inherit;
+  border-radius: 50%;
+}
+
+.cloud.c1 { width: 140px; height: 50px; top: 15%; left: -20%; animation-duration: 40s; }
+.cloud.c1::before { width: 70px; height: 70px; top: -35px; left: 20px; }
+.cloud.c1::after { width: 50px; height: 50px; top: -25px; left: 80px; }
+
+.cloud.c2 { width: 100px; height: 40px; top: 30%; left: -25%; animation-duration: 55s; animation-delay: -15s; }
+.cloud.c2::before { width: 55px; height: 55px; top: -28px; left: 15px; }
+.cloud.c2::after { width: 40px; height: 40px; top: -18px; left: 60px; }
+
+.cloud.c3 { width: 160px; height: 55px; top: 50%; left: -30%; animation-duration: 65s; animation-delay: -30s; }
+.cloud.c3::before { width: 75px; height: 75px; top: -38px; left: 25px; }
+.cloud.c3::after { width: 55px; height: 55px; top: -28px; left: 90px; }
+
+.cloud.c4 { width: 120px; height: 45px; top: 65%; left: -20%; animation-duration: 48s; animation-delay: -10s; }
+.cloud.c4::before { width: 60px; height: 60px; top: -30px; left: 18px; }
+.cloud.c4::after { width: 45px; height: 45px; top: -20px; left: 70px; }
+
+@keyframes drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(140vw); }
+}
+
+.rain-layer,
+.snow-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.rain-drop {
+  position: absolute;
+  top: -10%;
+  width: 2px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.55);
+  animation: fall linear infinite;
+}
+@keyframes fall {
+  from { transform: translateY(-10vh) rotate(15deg); }
+  to { transform: translateY(110vh) rotate(15deg); }
+}
+
+.snow-flake {
+  position: absolute;
+  top: -5%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+  opacity: 0.9;
+  animation: snow-fall linear infinite;
+}
+@keyframes snow-fall {
+  from { transform: translate(0, -5vh); }
+  to { transform: translate(20px, 105vh); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sun,
+  .cloud,
+  .rain-drop,
+  .snow-flake {
+    animation: none !important;
+  }
+}
+
+.status-pill {
+  display: inline-block;
+  background: var(--color-card);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.status-pill:empty {
+  display: none;
 }
 
 img {
   max-width: 100%;
 }
 
+[hidden] {
+  display: none !important;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius-md);
+  min-height: var(--touch-min);
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 #app {
-  padding: 24px 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+  padding-top: calc(16px + env(safe-area-inset-top, 0px));
+}
+
+/* Header */
+#main-header {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.header-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  background: var(--color-card);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.header-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+#location-name,
+#date-name {
+  font-weight: 600;
+}
+
+#info-button {
+  width: var(--touch-min);
+  background: var(--color-card);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  font-size: 1.2rem;
+}
+
+/* Controls panel — collapsible on phone, always open inline on laptop (R6) */
+#controls-panel {
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-top: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+#location-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+#location-input-row input {
+  flex: 1;
+  min-height: var(--touch-min);
+  padding: 0 12px;
+  border: 1px solid #d9dce1;
+  border-radius: var(--radius-md);
+  font: inherit;
+}
+
+#manual-location-submit,
+#use-device-location,
+#controls-done {
+  background: var(--color-primary);
+  color: white;
+  padding: 0 16px;
+}
+
+#use-device-location {
+  margin-top: 8px;
+}
+
+.privacy-note {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+#date-controls {
+  margin-top: 16px;
+}
+
+#date-chip-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.date-chip {
+  flex: 0 0 auto;
+  min-width: var(--touch-min);
+  padding: 8px 12px;
+  background: var(--color-bg);
+  border: 1px solid #d9dce1;
+  text-align: center;
+}
+
+.date-chip.selected {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+#controls-done {
+  margin-top: 16px;
+  width: 100%;
+}
+
+/* Main screen — phone: stacked */
+#main-screen {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#weather-card,
+#reminders-card {
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Transparent so the animated scene shows through around the character;
+   only character-stage (directly behind the art) stays opaque. */
+#character-card {
+  padding: 16px;
+}
+
+#weather-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#character-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2550 / 3300; /* matches the source art canvas exactly */
+  margin: 0 auto;
+  max-width: 320px;
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.character-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Stacking order: base body, then footwear underneath the lower-body layer
+   (pants/shorts hang over the tops of shoes), then upper on top of all. */
+#layer-base { z-index: 0; }
+#layer-footwear { z-index: 1; }
+#layer-lower { z-index: 2; }
+#layer-upper { z-index: 3; }
+
+#weather-icon-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#weather-icon-img {
+  width: 64px;
+  height: 64px;
+}
+
+#temperature-display {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+#feels-like-display {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+#recommendation-text {
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+
+#reminders-card h2 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+#reminders-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#reminders-list li {
+  background: var(--color-bg);
+  border-left: 4px solid var(--color-accent);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+}
+
+#status-message {
+  margin-top: 12px;
+  color: var(--color-text-muted);
+}
+
+/* Laptop: side-by-side, inline controls (R6, R18) — matches the laptop drawings
+   instead of just stretching the phone layout. */
+@media (min-width: 768px) {
+  #controls-panel {
+    display: flex !important;
+    gap: 24px;
+    align-items: flex-start;
+  }
+
+  #location-controls,
+  #date-controls {
+    margin-top: 0;
+    flex: 1;
+  }
+
+  #controls-done {
+    display: none;
+  }
+
+  #main-screen {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  #character-card {
+    flex: 1;
+  }
+
+  #character-stage {
+    max-width: 360px;
+  }
+
+  #weather-panel {
+    flex: 1;
+  }
 }
