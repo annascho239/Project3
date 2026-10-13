@@ -1,0 +1,299 @@
+commit cc170bfec31a5ebb16302b8bdb7de9b96f6dabe3
+Date: 2026-10-12 19:47:40 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Confirm all brief deliverables are in place except the debrief
+
+Checked plan.md's Deliver checklist directly against brief.md's
+deliverables list. Everything is done for both phases except the
+debrief conversation itself, which must run in its own fresh chat per
+debrief.md's setup protocol.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit 4301ec25f696f2839564b1df85810fdbff686618
+Date: 2026-10-12 19:47:04 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Add debrief.md and save the implementation transcript
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit cb178398ea4ec879f73877970a8eb12b3168f62e
+Date: 2026-10-12 19:36:20 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Implement the usability-testing improvement: redraw lower-warm
+
+Replaced the swim-trunks-style warm-weather shorts with plain athletic
+shorts (no drawstring), addressing a peer tester's finding that the
+app "only gave her male outfits." Verified the new piece renders and
+aligns correctly on the character locally. Old version kept as
+lower-warm-old.png for reference, not used by the app. Updated
+plan.md's and spec.md's revision records.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit 4cf553bd6d1b07d43bcc7f075e1793cc94b48aec
+Date: 2026-10-12 19:29:50 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Correct the chosen improvement's target asset
+
+Rechecked the actual art before giving redraw instructions: the base
+character body has no hair or facial features at all, so there was
+nothing gendered to redraw there. Re-scoped to lower-warm.png, a
+swim-trunks-style piece that more plausibly reads as masculine-coded.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit eb5bc359258185859c558ce08c27b358ccbfee67
+Date: 2026-10-12 19:17:57 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Record usability testing notes and chosen improvement
+
+Three peer sessions: positive reception to the hand-drawn art overall,
+one tester found the character/outfit art read as gendered despite
+being drawn with neutral intent, another suggested more outfit
+variations. Chose to address the gendered-character finding since it's
+the more specific, actionable usability issue - scoped to redrawing
+just the base character body/hairstyle (shared across every outfit
+combination), not the outfit pieces themselves.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit 07e5a1b73b0f56691f22d95a615b2e23302f1536
+Date: 2026-10-12 19:08:08 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Mark solo verification complete; ready for peer usability testing
+
+Systematic requirements review, multi-location/icon testing, real
+phone test, VoiceOver pass (found and fixed a date-chip accessibility
+bug), and a Lighthouse accessibility audit (100). Remaining: the three
+peer usability sessions and the resulting improvement.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit e6f1570d8226fdae5986c292f1ce37e5aa784c0b
+Date: 2026-10-12 18:58:51 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Fix date chips losing their accessible name on click
+
+Clicking a chip called renderDateChips(), which rebuilt every chip
+button from scratch - including the one just clicked - destroying the
+focused DOM node mid-interaction. VoiceOver testing caught this: it
+announced a generic "content button" instead of the date label. Split
+into renderDateChips() (builds chips once per date list) and
+updateChipSelection() (toggles .selected/aria-pressed on the existing
+buttons without recreating them). Also added aria-pressed for clearer
+toggle-button semantics.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit fb8a6846424aefdd343e61e85e72dbc9e926eaff
+Date: 2026-10-12 18:51:55 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Add guidance text to the service-error message (R16)
+
+The message was missing the "check connection, retry, choose another
+day" guidance R16 and the original sketch call for. Found during a
+systematic pass through every spec requirement.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit b3503d18a07b76c0f992cce119f18ba900f61456
+Date: 2026-10-12 18:49:26 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Mark Build checklist complete; app is live
+
+All Build tasks done and deployed to https://annascho239.github.io/Project3/,
+verified serving all files over HTTPS with NOAA/NWS CORS confirmed
+working from that exact origin. Next: the Verify and revise phase.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit b6120550d610fa28a001ccf8fd9a2c46daae258d
+Date: 2026-10-12 18:30:39 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Add shareable outfit card (spec R24/R25)
+
+Share button sits to the left of the info button in the header.
+Generates a Canvas-composited image (character in its current outfit,
+weather info, scene-matched gradient background), then uses the Web
+Share API when available or falls back to a plain download everywhere
+else. Verified working end-to-end.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit dbc3e951f6935579bc279cb5208d76875b2a383a
+Date: 2026-10-12 18:25:17 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Build the Information screen
+
+Phone: stacked cards (Creator, Weather source, Method, Privacy, Art &
+credits) with a Back button. Laptop: 2-column grid matching the
+drawings, with Art & credits spanning the bottom row. Wired to the
+header's info button; Back returns to the Main screen (or reopens
+location controls if no location was ever set yet).
+
+Also corrects research.md/spec.md: weather and reminder icons were
+planned as a licensed CC BY icon pack, but all 18 assets ended up
+hand-drawn originals by the Developer. Updated the Assets table, R14,
+and the Artwork approach decision to credit everything as original,
+with no third-party license to disclose.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit 4bd34e832fc94dab5ef5e4b11a44701320dab11c
+Date: 2026-10-12 18:17:07 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Add retry action for service-error/unavailable states
+
+Tracks the last attempted action (device location, manual location, or
+a weather fetch) so a "Try again" button can redo it after a failure,
+rather than requiring the user to find another way to retrigger the
+request. Shown only for retryable error types (service_error,
+unavailable) - denied/not_found/empty instead reopen the location
+controls, since those need different input, not a retry.
+
+Implemented and reasoned through, but not yet live-tested against an
+actual network failure - to confirm during the plan's Verify and
+revise phase.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit e1716c2bceb4b94add90f366a730bd183690088b
+Date: 2026-10-12 18:07:53 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Build the Main screen: layout, outfit plausibility fix, ZIP geocoding fix
+
+Responsive header (inline controls on laptop, expandable panel on
+phone), character layering, weather/recommendation/reminders cards, and
+a weather-matched animated background (5 scenes keyed to the weather
+icon: sunny, partly cloudy, cloudy, rain, snow) with a
+prefers-reduced-motion fallback.
+
+Fixes found while testing the built screen:
+- Footwear was rendering on top of the lower-body layer instead of
+  underneath it; fixed the stacking order.
+- Fully random outfit selection (the earlier R12 fix) could show a
+  puffer coat on a 95F day; refined to overlapping eligible-temperature
+  ranges per piece so selection stays plausible while still varying
+  within overlap zones. Recorded in spec.md.
+- Open-Meteo's country=US filter isn't reliable for raw ZIP queries
+  (matched "80016" to a French postal code instead of Aurora, CO);
+  routed 5-digit input to Zippopotam.us instead, which is purpose-built
+  for ZIP lookups. Recorded in spec.md.
+- The Done button didn't apply typed manual-location text before
+  closing the panel; now it does.
+- User-facing strings now use regular hyphens instead of em dashes.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit 52100a7cf0e211c3bf2f78f282a3650a3f47ba22
+Date: 2026-10-12 17:34:53 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Add recommendation engine; fix R9/R12 conflict in spec
+
+Builds one recommendation state per (location, date): deterministic
+seeded selection of outfit variation per category, weather icon mapped
+from NOAA/NWS condition codes, a temperature-driven written
+recommendation, and threshold-based reminders (umbrella/sunscreen/
+hydration) each with seeded wording. Verified in the test harness
+across all 7 days: variation differs between similar-temperature days,
+and reloading reproduces the same picks for the same date.
+
+Also fixes a contradiction in the approved spec found while building
+this: R9 mapped outfit variation to temperature bands, which would make
+two similar-temperature days always show the identical piece per
+category, failing R12's own variety requirement. Resolved per the
+brief's original intent — outfit art is independent-random per
+category; temperature instead drives the written text and reminders.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit 4f1e3842d66d860b8dc7a5a0983ec9200bf54ddc
+Date: 2026-10-12 17:30:38 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Add weather fetching from NOAA/NWS
+
+Fetches gridpoint, forecast periods, and raw gridpoint data for a
+location; enriches each period with feels-like (converted from the raw
+endpoint's Celsius values) and sky cover percent, used later by the
+sunscreen-reminder proxy rule since NOAA/NWS has no UV index.
+
+Resolves the display location name from NOAA/NWS's own relativeLocation
+data rather than a separate reverse-geocoding call. No User-Agent header
+is set — verified directly that any normal browser UA is accepted, only
+a truly empty one is rejected, so the browser's own default is fine.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit 50e600c2532c12e3efdb1f8964b6d942f0c14747
+Date: 2026-10-12 17:25:24 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Untrack .DS_Store
+
+Already listed in .gitignore, but it had been committed before the
+.gitignore existed, so git kept tracking it regardless.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit a0289a289f3e7fa89ff1bbae2e074b889eab10f6
+Date: 2026-10-12 17:23:34 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    illustrations
+
+
+commit cfa67aa7a81b545f6b0d638ca57c3bacd648c75e
+Date: 2026-10-12 17:04:48 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Scaffold static site skeleton
+
+Minimal index.html/css/js plus empty assets/ folders, deployed before
+build complexity is added, per plan.md's build order.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+commit baecd2df2fbdd3dc5bdc3cf8f72c06062ea4c1da
+Date: 2026-10-04 21:49:46 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    phase 1 done.
+
+
+commit b1134b7e335957634331a95d017e83b694fbe22d
+Date: 2026-10-04 21:47:58 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    phase 1 done
+
+
+commit a56bacd7cfb89e7a4adbfa9fdec1bd61e34c3587
+Date: 2026-10-04 19:49:31 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    reseearch
+
+
+commit 4c555e352d5f8d4c568ea427a130d390cc123866
+Date: 2026-09-28 16:53:31 -0500
+Author: anna-s-c <annacho239@gmail.com>
+
+    Initial commit
+
+
