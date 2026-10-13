@@ -125,7 +125,7 @@ Tester B's finding is the most substantive and actionable: the character/outfit 
 
 ### Chosen improvement
 
-Redraw the base character body (`assets/character/character.png`) with more gender-neutral proportions/hairstyle, keeping the same 2550×3300 canvas and pose so all 9 existing outfit pieces still align without needing to be redrawn. Scoped to just the base body since that's the single asset shared across every outfit combination — most efficient fix if the body/hairstyle (not the clothing itself) was what read as gendered to Tester B.
+Originally scoped as redrawing the base character body/hairstyle, but on review the base body (`character.png`) has no hair or facial features at all — nothing gendered to redraw there. The more likely source of Tester B's "male outfits" read is `lower-warm.png`, a swim-trunks/boxer-short style with a drawstring that reads specifically as men's swimwear rather than neutral shorts (Tester B tested Aurora, CO, which plausibly pulled the "warm" lower variant). Redrawing just that piece to a more neutral warm-weather shorts style, same 2550×3300 canvas and alignment as the current one.
 
 **After all three sessions:** summarize the strongest recurring finding and the one improvement it supports, then add that improvement to the Build checklist above and update `spec.md` if the intended result changes.
 
