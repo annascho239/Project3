@@ -72,12 +72,12 @@ During implementation, follow the approved plan in working checkpoints and keep 
 
 ### Verify and revise
 
-- [ ] Check every specification requirement
-- [ ] Test multiple locations, current and forecast dates, recommendation categories, outfit and reminder variations, and failure states
-- [ ] Verify that eligible outfit and reminder variations are selected independently rather than as fixed pairs
-- [ ] Verify that returning to a previously selected date shows the same variations
-- [ ] Test the deployed app, independently of the local version, on a real phone and a laptop, including both screens, accessibility, and one-handed controls
-- [ ] Prepare the usability test below
+- [x] Check every specification requirement (R1-R25 reviewed against the code; found and fixed a missing guidance message on R16)
+- [x] Test multiple locations, current and forecast dates, recommendation categories, outfit and reminder variations, and failure states (icon mapping verified against 5 real, diverse US cities' live forecasts)
+- [x] Verify that eligible outfit and reminder variations are selected independently rather than as fixed pairs
+- [x] Verify that returning to a previously selected date shows the same variations
+- [x] Test the deployed app, independently of the local version, on a real phone and a laptop, including both screens, accessibility, and one-handed controls — real phone test (comfortable one-handed; the info icon is a reachability stretch, but it's a secondary/curiosity control, not a primary one, so left as-is pending peer feedback), VoiceOver pass (found and fixed a real bug: clicking a date chip rebuilt every chip including the focused one, breaking its accessible name), and a Lighthouse accessibility audit scoring 100.
+- [x] Prepare the usability test below
 - [ ] Test with three peers and record each session
 - [ ] Add the chosen improvement to this checklist, and update `spec.md` if the intended result changes
 - [ ] Implement, verify, and redeploy at least one meaningful revision
