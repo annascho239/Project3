@@ -84,9 +84,9 @@ During implementation, follow the approved plan in working checkpoints and keep 
 
 ### Deliver
 
-- [ ] Confirm all brief deliverables, sources, privacy information, and asset credits
-- [ ] Save all chat transcripts
-- [ ] Complete the debrief
+- [x] Confirm all brief deliverables, sources, privacy information, and asset credits — checked against `brief.md`'s deliverables list directly: all Phase 1 and Phase 2 items are in place (research/spec/plan approved, references and screen drawings, working deployed app with commit history, usability testing and the implemented improvement) except the debrief itself
+- [x] Save all chat transcripts — research, specification, planning, and implementation transcripts saved in `transcripts/`; the debrief transcript is saved as part of its own protocol once that conversation happens
+- [ ] Complete the debrief — must be started in a fresh chat per `debrief.md`'s own setup instructions, not this conversation
 
 ## Usability testing
 
