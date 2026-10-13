@@ -78,9 +78,9 @@ During implementation, follow the approved plan in working checkpoints and keep 
 - [x] Verify that returning to a previously selected date shows the same variations
 - [x] Test the deployed app, independently of the local version, on a real phone and a laptop, including both screens, accessibility, and one-handed controls — real phone test (comfortable one-handed; the info icon is a reachability stretch, but it's a secondary/curiosity control, not a primary one, so left as-is pending peer feedback), VoiceOver pass (found and fixed a real bug: clicking a date chip rebuilt every chip including the focused one, breaking its accessible name), and a Lighthouse accessibility audit scoring 100.
 - [x] Prepare the usability test below
-- [ ] Test with three peers and record each session
-- [ ] Add the chosen improvement to this checklist, and update `spec.md` if the intended result changes
-- [ ] Implement, verify, and redeploy at least one meaningful revision
+- [x] Test with three peers and record each session
+- [x] Add the chosen improvement to this checklist, and update `spec.md` if the intended result changes
+- [x] Implement, verify, and redeploy at least one meaningful revision (redrew `lower-warm.png`, verified aligned/rendering correctly locally; redeploy pending)
 
 ### Deliver
 
