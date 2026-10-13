@@ -103,6 +103,30 @@ Before testing, record the purpose, a few realistic tasks, non-leading prompts, 
 
 **Note format (per session, labeled Tester A/B/C):** for each task — what the tester did/said, whether they succeeded, any barrier or question they voiced, and a possible change suggested by that friction. Keep what was observed (actions, quotes) separate from interpretation (why it might have happened).
 
+### Session notes
+
+**Tester A** — tested with Frisco, TX and Seattle, WA.
+- Observed: said the app "was very cute," was impressed with the hand-drawn assets, and said it worked well as a starting point.
+- Observed: suggested more outfit variations would "flesh it out more."
+- Interpretation: positive overall reception to the art direction and core concept; the one piece of friction is a sense that 3 variations per category feels thin after trying a couple of locations.
+
+**Tester B** — tested with Aurora, CO.
+- Observed: said the app "only gave her male outfits."
+- Observed (Developer's in-session response): explained the character/outfit art was drawn with the intent of reading as gender-neutral.
+- Interpretation: regardless of intent, at least one real user read the character/outfit art as gendered (masculine-coded), which matters for an app meant to serve any college student. This is a content/art finding, not a logic bug — nothing in the code assigns outfits by gender.
+
+**Tester C** — tested the app (location not noted).
+- Observed: "loved the UI and concept overall," thought the hand-drawn aspects "looked really cool," and said they liked that AI wasn't used for the art.
+- Interpretation: further positive confirmation of the hand-drawn-art decision from research/spec.
+
+### Strongest finding
+
+Tester B's finding is the most substantive and actionable: the character/outfit art reads as gendered to at least one real user, despite being drawn with neutral intent. Tester A's and C's feedback were positive confirmations of the existing direction rather than friction points, except for Tester A's secondary note about wanting more variations.
+
+### Chosen improvement
+
+Redraw the base character body (`assets/character/character.png`) with more gender-neutral proportions/hairstyle, keeping the same 2550×3300 canvas and pose so all 9 existing outfit pieces still align without needing to be redrawn. Scoped to just the base body since that's the single asset shared across every outfit combination — most efficient fix if the body/hairstyle (not the clothing itself) was what read as gendered to Tester B.
+
 **After all three sessions:** summarize the strongest recurring finding and the one improvement it supports, then add that improvement to the Build checklist above and update `spec.md` if the intended result changes.
 
 ## Revisions
